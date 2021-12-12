@@ -22,9 +22,21 @@ class MMDataset(Dataset):
         }
         DATA_MAP[args.datasetName]()
 
+    def __change_label(self, data:dict):
+        for mode in data.keys():
+            list_label = []
+            for m in "TAV":
+                np_label = np.abs(data[mode]['regression_labels'] - data[mode]['regression_labels_'+m])
+                list_label.append(np_label[:, np.newaxis])
+            data[mode]['regression_labels'] = np.concatenate(list_label, axis=1)
+
+        return data
+
     def __init_mosi(self):
         with open(self.args.dataPath, 'rb') as f:
             data = pickle.load(f)
+            # Change label
+            data = self.__change_label(data)
         if self.args.use_bert:
             self.text = data[self.mode]['text_bert'].astype(np.float32)
         else:
@@ -34,6 +46,7 @@ class MMDataset(Dataset):
         self.rawText = data[self.mode]['raw_text']
         self.ids = data[self.mode]['id']
 
+        # 通过self.args.train_mode选择是回归还是分类
         self.labels = {
             'M': data[self.mode][self.args.train_mode+'_labels'].astype(np.float32)
         }

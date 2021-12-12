@@ -50,7 +50,8 @@ def run(args):
     # device
     using_cuda = len(args.gpu_ids) > 0 and torch.cuda.is_available()
     logger.info("Let's use %d GPUs!" % len(args.gpu_ids))
-    device = torch.device('cuda:%d' % int(args.gpu_ids[0]) if using_cuda else 'cpu')
+    # device = torch.device('cuda:%d' % int(args.gpu_ids[0]) if using_cuda else 'cpu')
+    device = torch.device('cuda:%d' % int(0) if using_cuda else 'cpu')
     args.device = device
     # add tmp tensor to increase the temporary consumption of GPU
     tmp_tensor = torch.zeros((100, 100)).to(args.device)
@@ -164,7 +165,7 @@ def run_normal(args):
             config = ConfigRegression(args)
         else:
             config = ConfigClassification(args)
-        args = config.get_config()
+        args = config.get_config()  ###
         setup_seed(seed)
         args.seed = seed
         logger.info('Start running %s...' %(args.modelName))
@@ -261,11 +262,11 @@ def parse_args():
                         help='tune parameters ?')
     parser.add_argument('--train_mode', type=str, default="regression",
                         help='regression / classification')
-    parser.add_argument('--modelName', type=str, default='self_mm',
+    parser.add_argument('--modelName', type=str, default='mlf_dnn',
                         help='support lf_dnn/ef_lstm/tfn/lmf/mfn/graph_mfn/mult/misa/mlf_dnn/mtfn/mlmf/self_mm')
-    parser.add_argument('--datasetName', type=str, default='mosi',
+    parser.add_argument('--datasetName', type=str, default='sims',
                         help='support mosi/mosei/sims')
-    parser.add_argument('--num_workers', type=int, default=8,
+    parser.add_argument('--num_workers', type=int, default=0,
                         help='num workers of loading data')
     parser.add_argument('--model_save_dir', type=str, default='results/models',
                         help='path to save results.')

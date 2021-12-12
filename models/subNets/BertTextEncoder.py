@@ -10,6 +10,9 @@ from transformers import BertTokenizer, BertModel
 
 __all__ = ['BertTextEncoder']
 
+from config.constants import GlobalConfig
+
+
 class BertTextEncoder(nn.Module):
     def __init__(self, language='en', use_finetune=False):
         """
@@ -24,11 +27,13 @@ class BertTextEncoder(nn.Module):
         # directory is fine
         # pretrained_weights = '/home/sharing/disk3/pretrained_embedding/Chinese/bert/pytorch'
         if language == 'en':
-            self.tokenizer = tokenizer_class.from_pretrained('pretrained_model/bert_en', do_lower_case=True)
-            self.model = model_class.from_pretrained('pretrained_model/bert_en')
+            model_dir = os.path.join(GlobalConfig.root_dir, 'pretrained_berts/bert_en')
+            self.tokenizer = tokenizer_class.from_pretrained(model_dir, do_lower_case=True)
+            self.model = model_class.from_pretrained(model_dir)
         elif language == 'cn':
-            self.tokenizer = tokenizer_class.from_pretrained('pretrained_model/bert_cn')
-            self.model = model_class.from_pretrained('pretrained_model/bert_cn')
+            model_dir = os.path.join(GlobalConfig.root_dir, 'pretrained_berts/bert_cn')
+            self.tokenizer = tokenizer_class.from_pretrained(model_dir)
+            self.model = model_class.from_pretrained(model_dir)
         
         self.use_finetune = use_finetune
     

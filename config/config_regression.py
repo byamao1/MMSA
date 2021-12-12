@@ -1,6 +1,7 @@
 import os
 import argparse
 
+from config.constants import GlobalConfig
 from utils.functions import Storage
 
 class ConfigRegression():
@@ -41,11 +42,11 @@ class ConfigRegression():
                             ))
     
     def __datasetCommonParams(self):
-        root_dataset_dir = '/home/sharing/disk3/dataset/multimodal-sentiment-dataset/StandardDatasets'
+        root_dataset_dir = GlobalConfig.data_root_dir
         tmp = {
             'mosi':{
                 'aligned': {
-                    'dataPath': os.path.join(root_dataset_dir, 'MOSI/Processed/aligned_50.pkl'),
+                    'dataPath': os.path.join(root_dataset_dir, 'MOSI/aligned_50.pkl'),
                     'seq_lens': (50, 50, 50),
                     # (text, audio, video)
                     'feature_dims': (768, 5, 20),
@@ -55,7 +56,7 @@ class ConfigRegression():
                     'KeyEval': 'Loss' 
                 },
                 'unaligned': {
-                    'dataPath': os.path.join(root_dataset_dir, 'MOSI/Processed/unaligned_50.pkl'),
+                    'dataPath': os.path.join(root_dataset_dir, 'MOSI/unaligned_50.pkl'),
                     'seq_lens': (50, 50, 50),
                     # (text, audio, video)
                     'feature_dims': (768, 5, 20),
@@ -67,7 +68,7 @@ class ConfigRegression():
             },
             'mosei':{
                 'aligned': {
-                    'dataPath': os.path.join(root_dataset_dir, 'MOSEI/Processed/aligned_50.pkl'),
+                    'dataPath': os.path.join(root_dataset_dir, 'MOSEI/aligned_50.pkl'),
                     'seq_lens': (50, 50, 50),
                     # (text, audio, video)
                     'feature_dims': (768, 74, 35),
@@ -77,7 +78,7 @@ class ConfigRegression():
                     'KeyEval': 'Loss'
                 },
                 'unaligned': {
-                    'dataPath': os.path.join(root_dataset_dir, 'MOSEI/Processed/unaligned_50.pkl'),
+                    'dataPath': os.path.join(root_dataset_dir, 'MOSEI/unaligned_50.pkl'),
                     'seq_lens': (50, 500, 375),
                     # (text, audio, video)
                     'feature_dims': (768, 74, 35),
@@ -89,7 +90,7 @@ class ConfigRegression():
             },
             'sims':{
                 'unaligned': {
-                    'dataPath': os.path.join(root_dataset_dir, 'SIMS/Processed/features/unaligned_39.pkl'),
+                    'dataPath': os.path.join(root_dataset_dir, 'SIMS/Processed/unaligned_39.pkl'),
                     # (batch_size, seq_lens, feature_dim)
                     'seq_lens': (39, 400, 55), # (text, audio, video)
                     'feature_dims': (768, 33, 709), # (text, audio, video)
