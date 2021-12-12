@@ -18,9 +18,10 @@ class ConfigTune():
             'ef_lstm': self.__EF_LSTM,
             'lf_dnn': self.__LF_DNN,
             'graph_mfn': self.__Graph_MFN,
-            # 'mag': self.__MAG,
+            'mag': self.__BERT_MAG,
             'mult': self.__MULT,
             'misa': self.__MISA,
+            'mfm': self.__MFM,
             # multi-task
             'mtfn': self.__MTFN,
             'mlmf': self.__MLMF,
@@ -156,44 +157,45 @@ class ConfigTune():
         }
         return tmp
     
-    # def __MAG(self):
-    #     tmp = {
-    #         'commonParas':{
-    #             'need_align': False,
-    #             'use_finetune': True,
-    #             'use_bert': True,
-    #             'early_stop': 8,
-    #             'multi_label': True,
-    #             'need_normalize': False,
-    #             # Tuning
-    #             'weight_decay': 0.0,
-    #         },
-    #         # dataset
-    #         'datasetParas':{
-    #             'raw_mosi':{
-    #                 'loss_function':'ll1',
-    #                 'd_acoustic_in':5,
-    #                 'd_visual_in':20,
-    #                 'h_merge_sent':768,
-    #                 # add MAG after "AV_index" layer
-    #                 # -1 means adding after all layers
-    #                 # -2 means not use MAG
-    #                 # 'AV_index':1,
-    #                 'output_mode':'regression',
-    #                 'num_labels':2, # is valid when output_mode == "classification"
-    #             },
-    #         },
-    #         'debugParas':{
-    #             'd_paras': ['exclude_zero', 'AV_index', 'batch_size', 'learning_rate', 'hidden_dropout_prob', 'beta_shift'],
-    #             'exclude_zero': random.choice([True, False]),
-    #             'AV_index': random.choice([-2, 1]),
-    #             'batch_size': random.choice([32, 48, 64]),
-    #             'learning_rate': random.choice([2e-5, 5e-5, 1e-4, 1e-5]),
-    #             'hidden_dropout_prob': random.choice([0.2, 0.1, 0.5]),
-    #             'beta_shift': random.choice([1]),
-    #         }
-    #     }
-    #     return tmp
+    def __BERT_MAG(self):
+        tmp = {
+            'commonParas':{
+                'need_data_aligned': True,
+                'need_model_aligned': False,
+                'use_finetune': True,
+                'use_bert': True,
+                'early_stop': 8,
+                'multi_label': True,
+                'need_normalize': False,
+                # Tuning
+                'weight_decay': 0.0,
+            },
+            # dataset
+            'datasetParas':{
+                'raw_mosi':{
+                    'loss_function':'ll1',
+                    'd_acoustic_in':5,
+                    'd_visual_in':20,
+                    'h_merge_sent':768,
+                    # add MAG after "AV_index" layer
+                    # -1 means adding after all layers
+                    # -2 means not use MAG
+                    # 'AV_index':1,
+                    'output_mode':'regression',
+                    'num_labels':2, # is valid when output_mode == "classification"
+                },
+            },
+            'debugParas':{
+                'd_paras': ['exclude_zero', 'AV_index', 'batch_size', 'learning_rate', 'hidden_dropout_prob', 'beta_shift'],
+                'exclude_zero': random.choice([True, False]),
+                'AV_index': random.choice([-2, 1]),
+                'batch_size': random.choice([32, 48, 64]),
+                'learning_rate': random.choice([2e-5, 5e-5, 1e-4, 1e-5]),
+                'hidden_dropout_prob': random.choice([0.2, 0.1, 0.5]),
+                'beta_shift': random.choice([1]),
+            }
+        }
+        return tmp
 
     def __MISA(self):
         tmp = {
@@ -279,6 +281,51 @@ class ConfigTune():
                 'd_paras': ['hidden_dims','memsize','windowsize','NN1Config','NN2Config','gamma1Config','gamma2Config',\
                     'outConfig','batch_size','learning_rate'],
                 'hidden_dims': random.choice([(128,16,128),(64,16,64),(128,32,128),(256,32,256),(64,32,64)]),
+                'memsize': random.choice([64,128,256,300,400]),
+                'windowsize': 2,
+                'NN1Config': {"drop": random.choice([0.0,0.2,0.5,0.7]), "shapes": random.choice([32,64,128,256])},
+                'NN2Config': {"drop": random.choice([0.0,0.2,0.5,0.7]), "shapes": random.choice([32,64,128,256])},
+                'gamma1Config': {"drop": random.choice([0.0,0.2,0.5,0.7]), "shapes": random.choice([32,64,128,256])},
+                'gamma2Config': {"drop": random.choice([0.0,0.2,0.5,0.7]), "shapes": random.choice([32,64,128,256])},
+                'outConfig': {"drop": random.choice([0.0,0.2,0.5,0.7]), "shapes": random.choice([32,64,128,256])},
+                'batch_size': random.choice([32,64,128]),
+                'learning_rate': random.choice([5e-4,1e-3,2e-3,5e-3]),
+            }
+        }
+        return tmp
+
+    def __MFM(self):
+        tmp = {
+            'commonParas':{
+                'need_data_aligned': True,
+                'need_model_aligned': True,
+                'need_normalized': True,
+                'early_stop': 8,
+            },
+            
+            'debugParas':{
+                'd_paras': ['hidden_dims', 'zy_size', 'zl_size', 'za_size', 'zv_size', 'fy_size',\
+                'fl_size', 'fa_size', 'fv_size', 'zy_to_fy_dropout', 'zl_to_fl_dropout', 'za_to_fa_dropout', 'zv_to_fv_dropout', 'fy_to_y_dropout',\
+                'lda_mmd', 'lda_xl', 'lda_xa', 'lda_xv', 'memsize','windowsize','NN1Config','NN2Config','gamma1Config','gamma2Config',\
+                'outConfig','batch_size','learning_rate'],
+                'hidden_dims': random.choice([(128,16,128),(64,16,64),(128,32,128),(256,32,256),(64,32,64)]),
+                'zy_size': random.choice([8,16,32,48,64,80]),
+                'zl_size': random.choice([32,64,88,128,156,256]),
+                'za_size': random.choice([8,16,32,48,64,80]),
+                'zv_size': random.choice([8,16,32,48,64,80]),
+                'fy_size': random.choice([8,16,32,48,64,80]),
+                'fl_size': random.choice([32,64,88,128,156,256]),
+                'fa_size': random.choice([8,16,32,48,64,80]),
+                'fv_size': random.choice([8,16,32,48,64,80]),
+                'zy_to_fy_dropout': random.choice([0.0,0.2,0.5,0.7]),
+                'zl_to_fl_dropout': random.choice([0.0,0.2,0.5,0.7]),
+                'za_to_fa_dropout': random.choice([0.0,0.2,0.5,0.7]),
+                'zv_to_fv_dropout': random.choice([0.0,0.2,0.5,0.7]),
+                'fy_to_y_dropout': random.choice([0.0,0.2,0.5,0.7]),
+                'lda_mmd': random.choice([10,50,100,200]),
+                'lda_xl': random.choice([0.01,0.1,0.5,1.0,2.0,5.0,10.0]),
+                'lda_xa': random.choice([0.01,0.1,0.5,1.0,2.0,5.0,10.0]),
+                'lda_xv': random.choice([0.01,0.1,0.5,1.0,2.0,5.0,10.0]),
                 'memsize': random.choice([64,128,256,300,400]),
                 'windowsize': 2,
                 'NN1Config': {"drop": random.choice([0.0,0.2,0.5,0.7]), "shapes": random.choice([32,64,128,256])},

@@ -24,8 +24,9 @@ class ATIO():
             'lf_dnn': LF_DNN,
             'graph_mfn': Graph_MFN,
             'mult': MULT,
-            # 'bert_mag':BERT_MAG,
+            'bert_mag':BERT_MAG,
             'misa': MISA,
+            'mfm': MFM,
             # multi-task
             'mtfn': MTFN,
             'mlmf': MLMF,
